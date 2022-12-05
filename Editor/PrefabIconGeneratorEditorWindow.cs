@@ -9,6 +9,9 @@ namespace AffenCode
     public class PrefabIconGeneratorEditorWindow : EditorWindow
     {
         private const string DestinationFolderPathPrefKey = "AffenCode.PrefabIconGenerator.DestinationFolderPath";
+        private const string CameraOffsetXPrefKey = "AffenCode.PrefabIconGenerator.CameraOffset.X";
+        private const string CameraOffsetYPrefKey = "AffenCode.PrefabIconGenerator.CameraOffset.Y";
+        private const string CameraOffsetZPrefKey = "AffenCode.PrefabIconGenerator.CameraOffset.Z";
         private const string CameraAngleXPrefKey = "AffenCode.PrefabIconGenerator.CameraAngle.X";
         private const string CameraAngleYPrefKey = "AffenCode.PrefabIconGenerator.CameraAngle.Y";
         private const string CameraAngleZPrefKey = "AffenCode.PrefabIconGenerator.CameraAngle.Z";
@@ -29,6 +32,9 @@ namespace AffenCode
 
         private Vector3 _cameraAnglePrev;
         private Vector3 _cameraAngle = new Vector3(15f, 45f, 0f);
+
+        private Vector3 _cameraOffsetPrev;
+        private Vector3 _cameraOffset = new Vector3(0, 0, 0f);
         
         private float _cameraDistancePrev;
         private float _cameraDistance = 5f;
@@ -76,6 +82,11 @@ namespace AffenCode
             var cameraAngleZ = EditorPrefs.GetFloat(CameraAngleZPrefKey, 0);
             _cameraAngle = new Vector3(cameraAngleX, cameraAngleY, cameraAngleZ);
             
+            var objectAngleX = EditorPrefs.GetFloat(CameraOffsetXPrefKey, 15f);
+            var objectAngleY = EditorPrefs.GetFloat(CameraOffsetYPrefKey, 45f);
+            var objectAngleZ = EditorPrefs.GetFloat(CameraOffsetZPrefKey, 0);
+            _cameraOffset = new Vector3(objectAngleX, objectAngleY, objectAngleZ);
+            
             _cameraDistance = EditorPrefs.GetFloat(CameraDistancePrefKey, 5f);
             _cameraFieldOfView = EditorPrefs.GetFloat(CameraFieldOfViewPrefKey, 30f);
             _cameraOrthographic = EditorPrefs.GetInt(CameraOrthographicPrefKey, 0) > 0;
@@ -95,7 +106,7 @@ namespace AffenCode
             var changed = false;
             
             DrawDestinationFolderPath();
-            _prefab = (GameObject) EditorGUILayout.ObjectField(_prefab, typeof(GameObject), false);
+            _prefab = (GameObject) EditorGUILayout.ObjectField(_prefab, typeof(GameObject), true);
 
             if (!_prefab)
             {
@@ -112,6 +123,10 @@ namespace AffenCode
                 _cameraAnglePrev = _cameraAngle;
                 _cameraAngle = EditorGUILayout.Vector3Field("Angle", _cameraAngle);
                 changed |= _cameraAngle != _cameraAnglePrev;
+
+                _cameraOffsetPrev = _cameraOffset;
+                _cameraOffset = EditorGUILayout.Vector3Field("Offset", _cameraOffset);
+                changed |= _cameraOffset != _cameraOffsetPrev;
                 
                 _cameraOrthographicPrev = _cameraOrthographic;
                 _cameraOrthographic = EditorGUILayout.Toggle("Orthographic", _cameraOrthographic);
@@ -201,6 +216,7 @@ namespace AffenCode
             var iconBuilder = new IconBuilder();
             iconBuilder.Build(new IconBuilderSettings
             {
+                CameraOffset = _cameraOffset,
                 CameraDistance = _cameraDistance,
                 CameraFieldOfView = _cameraFieldOfView,
                 CameraAngle = _cameraAngle,
@@ -215,6 +231,10 @@ namespace AffenCode
 
         private void Save()
         {
+            EditorPrefs.SetFloat(CameraOffsetXPrefKey, _cameraOffset.x);
+            EditorPrefs.SetFloat(CameraOffsetYPrefKey, _cameraOffset.y);
+            EditorPrefs.SetFloat(CameraOffsetZPrefKey, _cameraOffset.z);
+            
             EditorPrefs.SetFloat(CameraAngleXPrefKey, _cameraAngle.x);
             EditorPrefs.SetFloat(CameraAngleYPrefKey, _cameraAngle.y);
             EditorPrefs.SetFloat(CameraAngleZPrefKey, _cameraAngle.z);

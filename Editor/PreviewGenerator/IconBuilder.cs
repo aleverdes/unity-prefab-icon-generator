@@ -35,6 +35,7 @@ namespace AffenCode
         public float CameraDistance;
         public float CameraFieldOfView;
         public Vector3 CameraAngle;
+        public Vector3 CameraOffset;
         public bool CameraOrthographic;
         public float CameraOrthographicSize;
         public IconFormat Format;

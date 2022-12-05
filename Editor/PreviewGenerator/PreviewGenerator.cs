@@ -200,6 +200,7 @@ namespace AffenCode
             float distance = cameraDistance * objectSize / cameraView;
             distance += objectSize;
             camera.transform.position = bounds.center - distance * camera.transform.forward;
+            camera.transform.localPosition += _settings.CameraOffset;
         }
 
         private Bounds CalculateBounds(Transform target, PreviewSettings settings)
