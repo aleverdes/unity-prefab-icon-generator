@@ -70,9 +70,9 @@ namespace AffenCode
 
         private void Awake()
         {
-            if (Selection.activeObject)
+            if (Selection.activeObject && Selection.activeObject is GameObject gameObject)
             {
-                _prefab = (GameObject) Selection.activeObject;
+                _prefab = gameObject;
             }
 
             _destinationFolderPath = EditorPrefs.GetString(DestinationFolderPathPrefKey, "Assets/Icons");
@@ -82,10 +82,10 @@ namespace AffenCode
             var cameraAngleZ = EditorPrefs.GetFloat(CameraAngleZPrefKey, 0);
             _cameraAngle = new Vector3(cameraAngleX, cameraAngleY, cameraAngleZ);
             
-            var objectAngleX = EditorPrefs.GetFloat(CameraOffsetXPrefKey, 15f);
-            var objectAngleY = EditorPrefs.GetFloat(CameraOffsetYPrefKey, 45f);
-            var objectAngleZ = EditorPrefs.GetFloat(CameraOffsetZPrefKey, 0);
-            _cameraOffset = new Vector3(objectAngleX, objectAngleY, objectAngleZ);
+            var cameraOffsetX = EditorPrefs.GetFloat(CameraOffsetXPrefKey, 0);
+            var cameraOffsetY = EditorPrefs.GetFloat(CameraOffsetYPrefKey, 0);
+            var cameraOffsetZ = EditorPrefs.GetFloat(CameraOffsetZPrefKey, 0);
+            _cameraOffset = new Vector3(cameraOffsetX, cameraOffsetY, cameraOffsetZ);
             
             _cameraDistance = EditorPrefs.GetFloat(CameraDistancePrefKey, 5f);
             _cameraFieldOfView = EditorPrefs.GetFloat(CameraFieldOfViewPrefKey, 30f);
