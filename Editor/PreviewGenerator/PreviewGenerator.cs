@@ -143,13 +143,14 @@ namespace AffenCode
 
             var transform = gameObject.transform;
             transform.position = Vector3.zero;
-            transform.eulerAngles = new Vector3(50f, 30f, 0f);
+            transform.eulerAngles = new Vector3(_settings.LightingAngle.x, _settings.LightingAngle.y, _settings.LightingAngle.z);
 
             var light = transform.gameObject.AddComponent<Light>();
             light.cullingMask = 1 << settings.RenderLayer;
             light.type = LightType.Directional;
             light.shadows = LightShadows.Soft;
             light.shadowResolution = LightShadowResolution.VeryHigh;
+            light.intensity = _settings.LightingIntensity;
 
             return light;
         }

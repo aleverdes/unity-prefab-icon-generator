@@ -15,6 +15,10 @@ namespace AffenCode
         private const string CameraAngleXPrefKey = "AffenCode.PrefabIconGenerator.CameraAngle.X";
         private const string CameraAngleYPrefKey = "AffenCode.PrefabIconGenerator.CameraAngle.Y";
         private const string CameraAngleZPrefKey = "AffenCode.PrefabIconGenerator.CameraAngle.Z";
+        private const string LightingAngleXPrefKey = "AffenCode.PrefabIconGenerator.LightingAngle.X";
+        private const string LightingAngleYPrefKey = "AffenCode.PrefabIconGenerator.LightingAngle.Y";
+        private const string LightingAngleZPrefKey = "AffenCode.PrefabIconGenerator.LightingAngle.Z";
+        private const string LightingIntensityPrefKey = "AffenCode.PrefabIconGenerator.LightingIntensity.Z";
         private const string CameraDistancePrefKey = "AffenCode.PrefabIconGenerator.CameraDistance";
         private const string CameraFieldOfViewPrefKey = "AffenCode.PrefabIconGenerator.CameraFieldOfView";
         private const string CameraOrthographicPrefKey = "AffenCode.PrefabIconGenerator.CameraOrthographic";
@@ -29,9 +33,16 @@ namespace AffenCode
         private Texture2D _preview;
 
         private bool _cameraFoldout = true;
+        private bool _lightingFoldout = true;
 
         private Vector3 _cameraAnglePrev;
         private Vector3 _cameraAngle = new Vector3(15f, 45f, 0f);
+
+        private Vector3 _lightingAnglePrev;
+        private Vector3 _lightingAngle = new Vector3(50f, 30f, 0f);
+        
+        private float _lightingIntensityPrev;
+        private float _lightingIntensity = 1f;
 
         private Vector3 _cameraOffsetPrev;
         private Vector3 _cameraOffset = new Vector3(0, 0, 0f);
@@ -64,7 +75,7 @@ namespace AffenCode
         private static void ShowWindow()
         {
             var window = GetWindow<PrefabIconGeneratorEditorWindow>();
-            window.minSize = new Vector2(256f, 600f);
+            window.minSize = new Vector2(256f, 740f);
             window.maxSize = window.minSize;
         }
 
@@ -81,6 +92,13 @@ namespace AffenCode
             var cameraAngleY = EditorPrefs.GetFloat(CameraAngleYPrefKey, 45f);
             var cameraAngleZ = EditorPrefs.GetFloat(CameraAngleZPrefKey, 0);
             _cameraAngle = new Vector3(cameraAngleX, cameraAngleY, cameraAngleZ);
+            
+            var lightingAngleX = EditorPrefs.GetFloat(LightingAngleXPrefKey, 50f);
+            var lightingAngleY = EditorPrefs.GetFloat(LightingAngleYPrefKey, 30f);
+            var lightingAngleZ = EditorPrefs.GetFloat(LightingAngleZPrefKey, 0);
+            _lightingAngle = new Vector3(lightingAngleX, lightingAngleY, lightingAngleZ);
+            
+            _lightingIntensity = EditorPrefs.GetFloat(LightingIntensityPrefKey, 1f);
             
             var cameraOffsetX = EditorPrefs.GetFloat(CameraOffsetXPrefKey, 0);
             var cameraOffsetY = EditorPrefs.GetFloat(CameraOffsetYPrefKey, 0);
@@ -149,6 +167,23 @@ namespace AffenCode
                     changed |= Mathf.Abs(_cameraFieldOfView - _cameraFieldOfViewPrev) > Epsilon;
                 }
                 
+                EditorGUILayout.Space();
+                EditorGUI.indentLevel--;
+            }
+
+            _cameraFoldout = EditorGUILayout.Foldout(_cameraFoldout, "Lighting Settings");
+            if (_cameraFoldout)
+            {
+                EditorGUI.indentLevel++;
+                
+                _lightingAnglePrev = _lightingAngle;
+                _lightingAngle = EditorGUILayout.Vector3Field("Angle", _lightingAngle);
+                changed |= _lightingAngle != _lightingAnglePrev;
+                
+                _lightingIntensityPrev = _lightingIntensity;
+                _lightingIntensity = EditorGUILayout.FloatField("Intensity", _lightingIntensity);
+                changed |= Mathf.Abs(_lightingIntensity - _lightingIntensityPrev) > Epsilon;
+                    
                 EditorGUILayout.Space();
                 EditorGUI.indentLevel--;
             }
@@ -222,6 +257,8 @@ namespace AffenCode
                 CameraAngle = _cameraAngle,
                 CameraOrthographic = _cameraOrthographic,
                 CameraOrthographicSize = _cameraOrthographicSize,
+                LightingAngle = _lightingAngle,
+                LightingIntensity = _lightingIntensity,
                 Size = new Vector2Int(_iconWidth, _iconHeight),
                 DestinationFolderPath = _destinationFolderPath,
                 Prefab = _prefab,
@@ -234,6 +271,12 @@ namespace AffenCode
             EditorPrefs.SetFloat(CameraOffsetXPrefKey, _cameraOffset.x);
             EditorPrefs.SetFloat(CameraOffsetYPrefKey, _cameraOffset.y);
             EditorPrefs.SetFloat(CameraOffsetZPrefKey, _cameraOffset.z);
+            
+            EditorPrefs.SetFloat(LightingAngleXPrefKey, _lightingAngle.x);
+            EditorPrefs.SetFloat(LightingAngleYPrefKey, _lightingAngle.y);
+            EditorPrefs.SetFloat(LightingAngleZPrefKey, _lightingAngle.z);
+
+            EditorPrefs.SetFloat(LightingIntensityPrefKey, _lightingIntensity);
             
             EditorPrefs.SetFloat(CameraAngleXPrefKey, _cameraAngle.x);
             EditorPrefs.SetFloat(CameraAngleYPrefKey, _cameraAngle.y);
