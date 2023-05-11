@@ -166,13 +166,33 @@ namespace AffenCode
                     _cameraFieldOfView = EditorGUILayout.FloatField("Field Of View", _cameraFieldOfView);
                     changed |= Mathf.Abs(_cameraFieldOfView - _cameraFieldOfViewPrev) > Epsilon;
                 }
+
+                if (GUILayout.Button("Center"))
+                {
+                    var meshRenderers = _prefab.GetComponentsInChildren<MeshRenderer>();
+                    var bounds = new Bounds();
+                    var center = Vector3.zero;
+                    int count = 0;
+                    foreach (var meshRenderer in meshRenderers)
+                    {
+                        var meshRendererBounds = meshRenderer.bounds;
+                        center += meshRendererBounds.center;
+                        bounds.Expand(meshRendererBounds.size);
+                        count++;
+                    }
+
+                    center = (1f / count) * center;
+                    center -= _prefab.transform.position;
+                    center.x = -center.x;
+                    _cameraOffset = center;
+                }
                 
                 EditorGUILayout.Space();
                 EditorGUI.indentLevel--;
             }
 
-            _cameraFoldout = EditorGUILayout.Foldout(_cameraFoldout, "Lighting Settings");
-            if (_cameraFoldout)
+            _lightingFoldout = EditorGUILayout.Foldout(_lightingFoldout, "Lighting Settings");
+            if (_lightingFoldout)
             {
                 EditorGUI.indentLevel++;
                 
